@@ -1,6 +1,7 @@
 .result-json {
   max-height: 20rem;
-  width: 100%;
+  width: 80%;
+  margin: 2%;
   overflow-y: scroll;
   background-color: black;
   color: white;

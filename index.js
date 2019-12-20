@@ -1,12 +1,10 @@
 // Define all functions above so they can be used without issue with our data fetchers
 
 const findProductsInPriceRange = (products, range) => {
-  return products.filter(({ suggestedPrice }) => {
-    if (suggestedPrice >= range.min && suggestedPrice <= range.max) {
-      return true;
-    }
-    return false;
-  });
+  return products.filter(
+    ({ suggestedPrice }) =>
+      suggestedPrice >= range.min && suggestedPrice <= range.max
+  );
 };
 
 const groupCompaniesByLetter = companies => {
@@ -22,17 +20,61 @@ const groupCompaniesByLetter = companies => {
   return result;
 };
 
-const groupCompaniesByState = companies => {};
+const groupCompaniesByState = companies => {
+  const result = {};
+  companies.forEach(company => {
+    if (company.state in result) {
+      result[company.state].push(company);
+    } else {
+      result[company.state] = [company];
+    }
+  });
+  return result;
+};
 
-const processOfferings = (companies, products, offerings) => {};
+const processOfferings = (companies, products, offerings) => {
+  return offerings.map(offering => {
+    const copy = { ...offering };
+    copy.company = companies.find(company => company.id === copy.companyId);
+    copy.product = products.find(product => product.id === copy.productId);
+    return copy;
+  });
+};
 
 const getCompaniesByNumberOfOfferings = (
   companies,
   offerings,
   numOfferings
-) => {};
+) => {
+  // for each company
+  return companies.filter(company => {
+    let count = 0;
+    offerings.forEach(offering => {
+      if (offering.companyId === company.id) {
+        count++;
+      }
+    });
+    return count >= numOfferings;
+  });
+  // look through the products and find offerings
+  // if there are more than the number in an output array, add that company to the output
+};
 
-const processProducts = (products, offerings) => {};
+const processProducts = (products, offerings) => {
+  return products.map(product => {
+    let count = 0;
+    const total = offerings.reduce((acc, curr) => {
+      if (product.id === curr.productId) {
+        count++;
+        return acc + curr.price;
+      } else {
+        return acc + 0;
+      }
+    }, 0);
+    product.averagePrice = (total / count).toFixed(2);
+    return product;
+  });
+};
 
 // Get the data from each endpoint
 const grabCompanies = () => {
@@ -68,7 +110,7 @@ Promise.all([grabCompanies(), grabProducts(), grabOfferings()]).then(data => {
   const companies = data[0];
   const products = data[1];
   const offerings = data[2];
-
+  console.log(offerings);
   // render problem one answer
   one.querySelector('.result-json').innerHTML = JSON.stringify(
     findProductsInPriceRange(products, { min: 1, max: 3 }),
