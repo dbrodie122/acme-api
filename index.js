@@ -46,7 +46,6 @@ const getCompaniesByNumberOfOfferings = (
   offerings,
   numOfferings
 ) => {
-  // for each company
   return companies.filter(company => {
     let count = 0;
     offerings.forEach(offering => {
@@ -56,8 +55,6 @@ const getCompaniesByNumberOfOfferings = (
     });
     return count >= numOfferings;
   });
-  // look through the products and find offerings
-  // if there are more than the number in an output array, add that company to the output
 };
 
 const processProducts = (products, offerings) => {
@@ -110,7 +107,6 @@ Promise.all([grabCompanies(), grabProducts(), grabOfferings()]).then(data => {
   const companies = data[0];
   const products = data[1];
   const offerings = data[2];
-  console.log(offerings);
   // render problem one answer
   one.querySelector('.result-json').innerHTML = JSON.stringify(
     findProductsInPriceRange(products, { min: 1, max: 3 }),
